@@ -4,6 +4,7 @@ import copy
 import numpy as np
 import gym
 from gym.spaces import Discrete
+from gym.envs.registration import register
 
 
 class SnakeEnv(gym.Env):
@@ -13,12 +14,12 @@ class SnakeEnv(gym.Env):
     """
     SIZE = 100
 
-    def __init__(self, ladder_num, dices):
+    def __init__(self, ladder_num=0, dices=[3, 6]):
         """
         ladder_num: 梯子数量
         dices: 骰子种类，即动作类型
         """
-        self.num_envs = 1
+        self.num_envs = 1 # 愚蠢的东西，为了a2c
 
         self.ladder_num = ladder_num
         self.dices = dices
@@ -82,7 +83,7 @@ class SnakeEnv(gym.Env):
         else:
             return -1
 
-    def render(self):
+    def render(self, mode, **kwargs):
         """
         如果需要render，参考:https://github.com/openai/gym/blob/master/gym/envs/classic_control/cartpole.py
         """
@@ -90,3 +91,10 @@ class SnakeEnv(gym.Env):
 
     def close(self):
         pass
+
+
+# 注册该env
+register(
+    id='SnakeEnv-v111',
+    entry_point='snake_env:SnakeEnv',
+)

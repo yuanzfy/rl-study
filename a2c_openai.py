@@ -7,6 +7,8 @@ import numpy as np
 np.random.seed(1)
 
 class OpenAiAgent:
+    """
+    """
     def __init__(self, env):
         self.env = env
         self.s_len = env.observation_space.n
