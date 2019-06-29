@@ -18,6 +18,8 @@ class SnakeEnv(gym.Env):
         ladder_num: 梯子数量
         dices: 骰子种类，即动作类型
         """
+        self.num_envs = 1
+
         self.ladder_num = ladder_num
         self.dices = dices
 
@@ -42,20 +44,34 @@ class SnakeEnv(gym.Env):
         self.pos = 1
         return self.pos
 
-    def step(self, a):  # a表示一个动作
+    def step(self, actions):
         """
+        actions: 一个动作或一个动作list
         返回observation, reward, done, info
         """
-        step = np.random.randint(1, self.dices[a] + 1)
-        self.pos += step
-        if self.pos == 100:
-            return 100, self.reward(self.pos), 1, {}  # observation, reward, done, info
-        elif self.pos > 100:
-            self.pos = 200 - self.pos
+        def _step(a):
+            step = np.random.randint(1, self.dices[a] + 1)
+            self.pos += step
+            if self.pos == 100:
+                return 100, self.reward(self.pos), 1, {}  # observation, reward, done, info
+            elif self.pos > 100:
+                self.pos = 200 - self.pos
 
-        if self.pos in self.ladders:
-            self.pos = self.ladders[self.pos]
-        return self.pos, self.reward(self.pos), 0, {}
+            if self.pos in self.ladders:
+                self.pos = self.ladders[self.pos]
+            return self.pos, self.reward(self.pos), 0, {}
+
+        if isinstance(actions, np.ndarray):
+            obs, rewards, dones, infos = [], [], [], []
+            for _a in actions:
+                _ob, _reward, _done, _info = _step(_a)
+                obs.append(_ob)
+                rewards.append(_reward)
+                dones.append(_done)
+                infos.append(_info)
+            return obs, rewards, dones, infos
+        else:
+            return _step(actions)
 
     def reward(self, s):
         """

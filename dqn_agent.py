@@ -162,5 +162,5 @@ if __name__ == '__main__':
     from snake_env import SnakeEnv
     env = SnakeEnv(0, [3, 6])
     DQN = DQNAgent(env)
-    DQN.iteration()
-    print (DQN.pi())
+    DQN.learn()
+    print (DQN.get_pi())

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from baselines import deepq
+from baselines.a2c import a2c
+from baselines.a2c import runner
 import numpy as np
 
 np.random.seed(1)
@@ -11,10 +12,11 @@ class OpenAiAgent:
         self.s_len = env.observation_space.n
 
     def learn(self):
-        self.act = deepq.learn(self.env, network='mlp', total_timesteps=30000)
+        self.model = a2c.learn(env=self.env, network='mlp', total_timesteps=30000)
 
     def play(self, observation):
-        return self.act([observation])[0]
+        actions, values, states, _ = self.model.step([observation])
+        return actions[0]
 
     def get_pi(self):
         actions = []
